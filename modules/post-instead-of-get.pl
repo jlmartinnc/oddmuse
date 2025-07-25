@@ -18,7 +18,8 @@ use v5.10;
 
 AddModuleDescription('post-instead-of-get.pl', 'POST instead of GET extension');
 
-our ($q, $Now, $LastUpdate, %Action, @RcDays, $RcDefault, $ShowRollbacks, $ShowAll, $ShowEdits, %Languages);
+our ($q, $Now, $LastUpdate, %Action, @RcDays, $RcDefault, $ShowRollbacks, $ShowAll,
+     $ShowEdits, %Languages, $FullUrl);
 
 # You should install nosearch.pl, too.
 
@@ -134,6 +135,31 @@ sub PostNewGetFilterForm {
   $form .= $q->end_form;
   $form .= $q->p({-class => 'documentation'}, T('Using the ｢rollback｣ button on this page will reset the wiki to that particular point in time, undoing any later changes to all of the pages.')) if UserIsAdmin() and $all;
   return $form;
+}
+
+# History page with new form
+
+*PostOldGetFooterLinks=*GetFooterLinks;
+*GetFooterLinks=*PostNewGetFooterLinks;
+
+sub PostNewGetFooterLinks {
+  my $html = PostOldGetFooterLinks(@_);
+  my ($id, $rev) = @_;
+  if ($Action{history} and $rev ne '') {
+    my $label = T('View all changes');
+    my $unwanted = quotemeta(GetRCLink($id, $label));
+    my $form = qq{
+<form style="display: inline" method="POST" action="$FullUrl">
+  <input type="hidden" name="action" value="rc"/>
+  <input type="hidden" name="all" value="1"/>
+  <input type="hidden" name="showedit" value="1"/>
+  <input type="hidden" name="from" value="1"/>
+  <input type="hidden" name="rcidonly" value="$id"/>
+  <input type="submit" name="dobacklinks" value="$label">
+</form>};
+    $html =~ s/$unwanted/$form/;
+  }
+  return $html;
 }
 
 1;
