@@ -15,6 +15,7 @@
 
 use strict;
 use v5.10;
+use utf8;
 
 AddModuleDescription('post-instead-of-get.pl', 'POST instead of GET extension');
 
