@@ -118,7 +118,7 @@ simply restart it all:
 ## Using just Perl
 
 You can use Mojolicious as your web server. There is a simple
-\##server.pl## which you can use. Here's how you might start it:
+`server.pl` which you can use. Here's how you might start it:
 
     mkdir ~/oddmuse
     WikiDataDir=$HOME/oddmuse perl server.pl daemon
